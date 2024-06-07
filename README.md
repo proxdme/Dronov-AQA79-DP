@@ -33,9 +33,10 @@ Git c https://git-scm.com/downloads
 
 Пошаговый процесс установки и запуска
 
-1. в терминале IntelliJ ввести команду docker-compose up 
-2. в терминале java -jar aqa-shop.jar
-3. в терминале cd C:\Users\Public\Dronov-QA79-DP\gate-simulator, а затем npm start
+1. в терминале IntelliJ ввести команду docker-compose up --build
+2. в терминале IntelliJ ввести команду java "-Dspring.datasource.url=jdbc:mysql://localhost:3306/app" -jar artifacts/aqa-shop.jar для mysql
+3. java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar для postgresql 
+   
 
 
 ```
