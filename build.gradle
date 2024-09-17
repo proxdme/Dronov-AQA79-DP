@@ -20,6 +20,8 @@ dependencies {
     implementation 'com.github.javafaker:javafaker:1.0.2'
     implementation 'commons-dbutils:commons-dbutils:1.7'
     implementation 'com.codeborne:selenide:6.17.2'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.36'
+
 }
 
 test {
