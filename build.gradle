@@ -1,6 +1,16 @@
 plugins {
     id 'java'
     id "io.freefair.lombok" version "8.2.2"
+    id 'io.qameta.allure' version '2.9.6'
+}
+
+allure {
+    autoconfigure = true
+        version = '2.13.3'
+
+    useJUnit5 {
+        version = '2.13.3'
+    }
 }
 
 group 'ru.netology'
@@ -15,6 +25,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.seleniumhq.selenium:selenium-java:4.11.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.3.1'
     implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     implementation 'mysql:mysql-connector-java:8.0.22'
     implementation 'com.github.javafaker:javafaker:1.0.2'
