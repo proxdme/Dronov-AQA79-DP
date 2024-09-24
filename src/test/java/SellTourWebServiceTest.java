@@ -1,41 +1,42 @@
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
 import ru.netology.DataBaseHelper;
-import ru.netology.LoginPage;
+import ru.netology.SellTourWebService;
 import ru.netology.TestDataGenerator;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FirstTest {
-    private LoginPage loginPage;
-    private String dbUrl;
-    private String dbUser;
-    private String dbPassword;
+public class SellTourWebServiceTest {
+    private SellTourWebService loginPage;
+
 
     @BeforeEach
     void setUp() {
-        // Открываем браузер с нужным URL через Selenide
+
         Selenide.open("http://localhost:8080/");
-        loginPage = new LoginPage(); // Инициализируем страницу с формой
+        loginPage = new SellTourWebService(); // Инициализируем страницу с формой
 
 
+    }
+    @BeforeAll
+       static void setUpAll(){
+              SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+    @AfterAll
+       static void tearDownAll(){
+        SelenideLogger.removeListener("allure");
     }
 
     @Test
     public void testSuccessfulDebitCardPayment() {
-        String cardNumber = "1111 2222 3333 4444"; // Номер карты
-        String createdDate = TestDataGenerator.getCurrentDate(); // Получаем текущую дату для сравнения
+        String cardNumber = "1111 2222 3333 4444";
+
 
         loginPage.fillFormAndSubmit(
                 cardNumber,
@@ -45,18 +46,30 @@ public class FirstTest {
                 "123"
         );
 
+
         loginPage.verifySuccessNotification();
 
-        // Теперь мы ищем payment_id по созданной дате
-        //String paymentId = DataBaseHelper.getPaymentIdByCreatedDate(createdDate);
-        //assertNotNull(paymentId); // Проверяем, что payment_id существует
+
+        try {
+            Thread.sleep(10000); // Ожидание 5 секунд
+        } catch (InterruptedException e) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Ошибка при ожидании", e);
+        }
+
+
+        String paymentId = DataBaseHelper.getLastGeneratedPaymentId();
+        assertNotNull(paymentId, "payment_id не был сгенерирован или запись не добавлена");
+
+
+        boolean isRecordAdded = DataBaseHelper.isRecordAddedByPaymentId(paymentId);
+        assertTrue(isRecordAdded, "Запись не была добавлена в базу данных");
+
     }
 
-
-    @Test
+        @Test
     public void testDeclinedDebitCardPayment() {
-        String cardNumber = "5555 6666 7777 8888"; // Номер карты
-        String createdDate = TestDataGenerator.getCurrentDate(); // Получаем текущую дату
+        String cardNumber = "5555 6666 7777 8888";
+
 
         loginPage.fillFormAndSubmit(
                 cardNumber,
@@ -67,12 +80,25 @@ public class FirstTest {
         );
         loginPage.verifyErrorNotification("Ошибка");
 
-        // Теперь мы ищем payment_id по созданной дате
-        String paymentId = DataBaseHelper.getPaymentIdByCreatedDate(createdDate);
-        assertNotNull(paymentId); // Проверяем, что payment_id существует
+            try {
+                Thread.sleep(10000); // Ожидание 5 секунд
+            } catch (InterruptedException e) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Ошибка при ожидании", e);
+            }
 
 
-    }
+            String paymentId = DataBaseHelper.getLastGeneratedPaymentId();
+            assertNotNull(paymentId, "payment_id не был сгенерирован или запись не добавлена");
+
+
+            boolean isRecordAdded = DataBaseHelper.isRecordAddedByPaymentId(paymentId);
+            assertTrue(isRecordAdded, "Запись не была добавлена в базу данных");
+
+        }
+
+
+
+
 
     @Test
     public void testInvalidDebitCardNumber() {
@@ -127,7 +153,7 @@ public class FirstTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
-                "23",                  // Неверный год (меньше текущего)
+                TestDataGenerator.getInvalidYear(),
                 "Ivan Ivanov",
                 "123"
         );
@@ -152,7 +178,7 @@ public class FirstTest {
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
                 TestDataGenerator.getValidYear(),
-                "Иван Иванов",         // Владелец карты (на русском)
+                "Иван Иванов",
                 "123"
         );
         loginPage.verifyErrorNotification("Неверный формат");
@@ -164,7 +190,7 @@ public class FirstTest {
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
                 TestDataGenerator.getValidYear(),
-                "",                    // Пустое поле владельца
+                "",
                 "123"
         );
         loginPage.verifyErrorNotification("Поле обязательно для заполнения");
@@ -177,7 +203,7 @@ public class FirstTest {
                 TestDataGenerator.getValidMonth(),
                 TestDataGenerator.getValidYear(),
                 "Ivan Ivanov",
-                ""                     // Пустое поле CVC
+                ""
         );
         loginPage.verifyErrorNotification("Неверный формат");
     }
@@ -189,7 +215,7 @@ public class FirstTest {
                 TestDataGenerator.getValidMonth(),
                 TestDataGenerator.getValidYear(),
                 "Ivan Ivanov",
-                "12"                   // Неполный CVC
+                "12"
         );
         loginPage.verifyErrorNotification("Неверный формат");
     }

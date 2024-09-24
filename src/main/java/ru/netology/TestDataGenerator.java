@@ -25,5 +25,5 @@ public class TestDataGenerator {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(new Date());
     }
-    // Другие методы для генерации валидных и невалидных данных...
+    
 }
