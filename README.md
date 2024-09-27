@@ -33,7 +33,7 @@ Git c https://git-scm.com/downloads
 
 1. запустить Docker Desktop
 2. запустить IntelliJ IDEA
-3. в терминале IntelliJ ввести команду docker-compose up --build
+3. в терминале IntelliJ ввести команду docker-compose up 
 4. в терминале IntelliJ ввести команду java -jar ./artifacts/aqa-shop.jar 
 5. открыть SellTourWebServiceTest.java
 6. запусить SellTourWebServiceTest.java
