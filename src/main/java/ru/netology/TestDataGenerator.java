@@ -21,9 +21,6 @@ public class TestDataGenerator {
     public static String getInvalidYear() {
         return LocalDate.now().minusYears(1).format(DateTimeFormatter.ofPattern("yy"));
     }
-    public static String getCurrentDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormat.format(new Date());
-    }
-    
+
+
 }
