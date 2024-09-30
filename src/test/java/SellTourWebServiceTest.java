@@ -5,11 +5,6 @@ import org.junit.jupiter.api.*;
 import ru.netology.DataBaseHelper;
 import ru.netology.SellTourWebService;
 import ru.netology.TestDataGenerator;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SellTourWebServiceTest {
@@ -24,37 +19,31 @@ public class SellTourWebServiceTest {
 
 
     }
+
     @BeforeAll
-       static void setUpAll(){
-              SelenideLogger.addListener("allure", new AllureSelenide());
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
     }
+
     @AfterAll
-       static void tearDownAll(){
+    static void tearDownAll() {
         SelenideLogger.removeListener("allure");
     }
 
     @Test
     public void testSuccessfulDebitCardPayment() {
-        String cardNumber = "1111 2222 3333 4444";
 
 
         loginPage.fillFormAndSubmit(
-                cardNumber,
+                TestDataGenerator.getApprovedCardNumber(),
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 "123"
         );
 
 
         loginPage.verifySuccessNotification();
-
-
-        try {
-            Thread.sleep(10000); // Ожидание 5 секунд
-        } catch (InterruptedException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Ошибка при ожидании", e);
-        }
 
 
         String paymentId = DataBaseHelper.getLastGeneratedPaymentId();
@@ -66,38 +55,28 @@ public class SellTourWebServiceTest {
 
     }
 
-        @Test
+    @Test
     public void testDeclinedDebitCardPayment() {
-        String cardNumber = "5555 6666 7777 8888";
 
 
         loginPage.fillFormAndSubmit(
-                cardNumber,
+                TestDataGenerator.getDeclinedCardNumber(),
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyErrorNotification("Ошибка");
-
-            try {
-                Thread.sleep(10000); // Ожидание 5 секунд
-            } catch (InterruptedException e) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Ошибка при ожидании", e);
-            }
+        loginPage.verifyInputFieldError("Ошибка");
 
 
-            String paymentId = DataBaseHelper.getLastGeneratedPaymentId();
-            assertNotNull(paymentId, "payment_id не был сгенерирован или запись не добавлена");
+        String paymentId = DataBaseHelper.getLastGeneratedPaymentId();
+        assertNotNull(paymentId, "payment_id не был сгенерирован или запись не добавлена");
 
 
-            boolean isRecordAdded = DataBaseHelper.isRecordAddedByPaymentId(paymentId);
-            assertTrue(isRecordAdded, "Запись не была добавлена в базу данных");
+        boolean isRecordAdded = DataBaseHelper.isRecordAddedByPaymentId(paymentId);
+        assertTrue(isRecordAdded, "Запись не была добавлена в базу данных");
 
-        }
-
-
-
+    }
 
 
     @Test
@@ -105,11 +84,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444",       // Номер карты короче 16 символов
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyErrorNotification("Неверный формат");
+        loginPage.verifyInputFieldError("Неверный формат");
     }
 
     @Test
@@ -117,11 +96,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "",                     // Пустое поле номера карты
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyErrorNotification("Неверный формат");
+        loginPage.verifyInputFieldError("Неверный формат");
     }
 
     @Test
@@ -129,11 +108,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 "13",                  // Неверный месяц (больше 12)
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyErrorNotification("Неверно указан срок действия карты");
+        loginPage.verifyInputFieldError("Неверно указан срок действия карты");
     }
 
     @Test
@@ -141,11 +120,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 "",                    // Пустое поле месяца
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyErrorNotification("Неверный формат");
+        loginPage.verifyInputFieldError("Неверный формат");
     }
 
     @Test
@@ -153,11 +132,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getInvalidYear(),
+                TestDataGenerator.getYearWithOffset(-1),
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyErrorNotification("Истёк срок действия карты");
+        loginPage.verifyInputFieldError("Истёк срок действия карты");
     }
 
     @Test
@@ -169,7 +148,7 @@ public class SellTourWebServiceTest {
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyErrorNotification("Неверный формат");
+        loginPage.verifyInputFieldError("Неверный формат");
     }
 
     @Test
@@ -177,11 +156,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Иван Иванов",
                 "123"
         );
-        loginPage.verifyErrorNotification("Неверный формат");
+        loginPage.verifyInputFieldError("Неверный формат");
     }
 
     @Test
@@ -189,11 +168,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "",
                 "123"
         );
-        loginPage.verifyErrorNotification("Поле обязательно для заполнения");
+        loginPage.verifyInputFieldError("Поле обязательно для заполнения");
     }
 
     @Test
@@ -201,11 +180,11 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 ""
         );
-        loginPage.verifyErrorNotification("Неверный формат");
+        loginPage.verifyInputFieldError("Неверный формат");
     }
 
     @Test
@@ -213,10 +192,10 @@ public class SellTourWebServiceTest {
         loginPage.fillFormAndSubmit(
                 "4444 4444 4444 4444",
                 TestDataGenerator.getValidMonth(),
-                TestDataGenerator.getValidYear(),
+                TestDataGenerator.getYearWithOffset(1),
                 "Ivan Ivanov",
                 "12"
         );
-        loginPage.verifyErrorNotification("Неверный формат");
+        loginPage.verifyInputFieldError("Неверный формат");
     }
 }

@@ -1,9 +1,8 @@
 package ru.netology;
 
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class TestDataGenerator {
 
@@ -12,15 +11,19 @@ public class TestDataGenerator {
         return LocalDate.now().format(DateTimeFormatter.ofPattern("MM"));
     }
 
-    // Метод для генерации актуального года +1
-    public static String getValidYear() {
-        return LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+    // Объединённый метод для генерации года
+    public static String getYearWithOffset(int offset) {
+        return LocalDate.now().plusYears(offset).format(DateTimeFormatter.ofPattern("yy"));
     }
 
-    // Метод для генерации года в прошлом
-    public static String getInvalidYear() {
-        return LocalDate.now().minusYears(1).format(DateTimeFormatter.ofPattern("yy"));
+    // Метод для получения номера одобренной карты
+    public static String getApprovedCardNumber() {
+        return "1111 2222 3333 4444";
     }
 
-
+    // Метод для получения номера отклонённой карты
+    public static String getDeclinedCardNumber() {
+        return "5555 6666 7777 8888";
+    }
 }
+
