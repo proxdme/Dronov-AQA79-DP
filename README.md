@@ -9,23 +9,18 @@
 1. основные элементы проекта храняться в удаленном репозитории на GitHub: https://github.com/proxdme/Dronov-AQA79-DP
 2. для запуска проекта необходимо на компьютере под управлением ОС Windows 11.0 установить следующие  приложений: IntelliJ IDEA и плагины Docker,Gradle ; браузер Chrome; Docker Desktop; DBeaver; VS Code; Java 11; Git;  
 3. после установки приложений, запустить Docker Desktop, IntelliJ IDEA, DBeaver 
-4. 
-
-
 
 
 ### Prerequisites
 
-Что нужно установить на ПК для использования (например: Git, браузер и т.д.).
+Установить на ПК для использования: 
 IntelliJ IDEA 2024.1.6 (Community Edition)
 Chrome Версия 125.0.6422.142 (Официальная сборка), (64 бит)
 Docker Desktop 4.30.0 (149282)
 DBeaver версия 24.2.1
 Visual Studio Code (VS Code)
 Git c https://git-scm.com/downloads
-```
-Примеры
-```
+
 
 ### Установка и запуск.
 
@@ -35,19 +30,13 @@ Git c https://git-scm.com/downloads
 2. запустить IntelliJ IDEA
 3. в терминале IntelliJ ввести команду docker-compose up 
 4. в терминале IntelliJ ввести команду java -jar ./artifacts/aqa-shop.jar 
-5. открыть SellTourWebServiceTest.java
-6. запусить SellTourWebServiceTest.java
-7. 
+5. в терминале IntelliJ ввести команду запуска тестов ./gradlew test
+6. ./gradlew allureServe
+
    
 
 
-```
-Примеры
-```
-
 ## Лицензия
-
-Опишите условия лицензии
 
 Windows 11.0 Домашняя 21H2 сборка 22000.2538
 IntelliJ IDEA 2024.1.6 (Community Edition) Build #IC-241.19072.14, built on August 8, 2024
