@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import ru.netology.DataBaseHelper;
 import ru.netology.SellTourWebService;
 import ru.netology.TestDataGenerator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SellTourWebServiceTest {
@@ -13,6 +14,8 @@ public class SellTourWebServiceTest {
 
     @BeforeEach
     void setUp() {
+
+        DataBaseHelper.clearOrderEntityTable();
 
         Selenide.open("http://localhost:8080/");
         loginPage = new SellTourWebService(); // Инициализируем страницу с формой
@@ -66,7 +69,8 @@ public class SellTourWebServiceTest {
                 "Ivan Ivanov",
                 "123"
         );
-        loginPage.verifyInputFieldError("Ошибка");
+        // Здесь мы ожидаем системную ошибку (отказ в оплате)
+        loginPage.verifyErrorNotification();
 
 
         String paymentId = DataBaseHelper.getLastGeneratedPaymentId();
@@ -88,6 +92,7 @@ public class SellTourWebServiceTest {
                 "Ivan Ivanov",
                 "123"
         );
+        // Здесь мы ожидаем ошибку в поле ввода (неверный формат номера карты)
         loginPage.verifyInputFieldError("Неверный формат");
     }
 

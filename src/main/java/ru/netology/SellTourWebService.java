@@ -1,7 +1,6 @@
 package ru.netology;
 
 import java.time.Duration;
-
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Condition.*;
 
@@ -31,18 +30,12 @@ public class SellTourWebService {
 
     // Проверка уведомления об ошибке
     public void verifyErrorNotification() {
-        // Проверка сообщения в блоке уведомления
-        if ($(".notification__title").isDisplayed()) {
-            $(".notification__title").shouldBe(visible, Duration.ofSeconds(15))
-                    .shouldHave(text("Ошибка"));
-        } else {
-            throw new AssertionError("Уведомление об ошибке отсутствует");
-        }
+        $(".notification__title").shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(text("Ошибка"));
     }
 
     // Проверка ошибок в полях ввода
     public void verifyInputFieldError(String errorMessage) {
-        // Проверка ошибок в полях ввода
         $$(".input__sub").findBy(text(errorMessage))
                 .shouldBe(visible, Duration.ofSeconds(15));
     }
